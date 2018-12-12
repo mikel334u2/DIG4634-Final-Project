@@ -1,3 +1,5 @@
+import javafx.scene.paint.Color;
+
 class Conversions {
 	
 	public int extractColor(Bitmap bitmap, int radius){
@@ -44,17 +46,19 @@ class Conversions {
 		return Color.rgb(redAvg, greenAvg, blueAvg);
 	}
 	
-	private float[] RGBtoHSL(int rgb){
+	private double[] RGBtoHSL(int rgb){
 		
-		float h, s, l;
+		double h = 0;
+		double s = 0;
+		double l = 0;
 
-		float r = Color.red(rgb) / 255;
-		float g = Color.green(rgb) / 255;
-		float b = Color.blue(rgb) / 255;
+		double r = Color.red(rgb) / 255;
+		double g = Color.green(rgb) / 255;
+		double b = Color.blue(rgb) / 255;
 		
-		float min = Math.min(r, Math.min(g, b));
-		float max = Math.max(r, Math.max(g, b));
-		float delta = max - min;
+		double min = Math.min(r, Math.min(g, b));
+		double max = Math.max(r, Math.max(g, b));
+		double delta = max - min;
 
 		l = (max + min) / 2;
 
@@ -62,56 +66,72 @@ class Conversions {
 			h = s = 0;
 		else {
 	        s = delta / (1 - Math.abs(2 * l - 1));
-	        switch(max){
-	        case r:
-	        	int temp = (g - b) / delta;
-	        	h = temp + (temp < 0) ? 6 : 0;
-	        	break;
-	        case g:
+	        if (max == r)
+	            h = ((g - b) / delta) % 6;
+	        else if (max == g)
 	        	h = (b - r) / delta + 2;
-	        	break;
-	        case b:
+	        else if (max == b)
 	        	h = (r - g) / delta + 4;
-	        	break;
-	        }
 		}
-		return {h * 60, s * 100, l * 100};
+		
+		double[] hsl = {h * 60, s * 100, l * 100};
+		return hsl;
 	}
 	
-	private int HSLtoRGB(float[] hsl){
+	private int HSLtoRGB(double[] hsl){
 		
-		float r = 0;
-		float g = 0;
-		float b = 0;
-		float h = hsl[0];
-		float s = hsl[1];
-		float l = hsl[2];
+		double r = 0;
+		double g = 0;
+		double b = 0;
+		double h = hsl[0];
+		double s = hsl[1] / 100;
+		double l = hsl[2] / 100;
 		
-		if (s == 0)
-			r = g = b = l;
+		double delta = (1 - Math.abs(2 * l - 1)) * s;
+		double x = delta * (1 - Math.abs((h / 60.0) % 2 - 1));
+		double m = l - delta / 2.0;
+		
+		if (h < 60){
+		    r = delta;
+		    g = x;
+		    b = 0;
+		}
+		else if (h < 120){
+		    r = x;
+		    g = delta;
+		    b = 0;
+		}
+		else if (h < 180){
+		    r = 0;
+		    g = delta;
+		    b = x;
+		}
+		else if (h < 240){
+		    r = 0;
+		    g = x;
+		    b = delta;
+		}
+		else if (h < 300){
+		    r = x;
+		    g = 0;
+		    b = delta;
+		}
 		else {
-	        float q = (l < 0.5) ? l * (1 + s) : l + s - l * s;
-	        float p = 2 * l - q;
-	        r = hueToRGB(p, q, h + 1/3);
-	        g = hueToRGB(p, q, h);
-	        b = hueToRGB(p, q, h - 1/3);
+		    r = delta;
+		    g = 0;
+		    b = x;
 		}
+		    
+		r = Math.round((r + m) * 255);
+		g = Math.round((g + m) * 255);
+		b = Math.round((b + m) * 255);
 		
-		return Color.rgb(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
-	}
-	
-	private float hueToRGB(float p, float q, float t){
-		if (t < 0) t += 1;
-		if (t > 1) t -= 1;
-		if (t < 1/6) return p + (q - p) * 6 * t;
-		if (t < 1/2) return q;
-		if (t < 2/3) return p + (q - p) * (2 - 3 * t) * 2;
-		return p;
+		return Color.rgb((int) r, (int) g, (int) b);
 	}
 
 	public int complementary(int rgb){
 		
-		float[] hsl = RGBtoHSL(rgb);
+		double[] hsl = RGBtoHSL(rgb);
 		hsl[0] = (hsl[0] + 180) % 360;
 		return HSLtoRGB(hsl);
 	}
