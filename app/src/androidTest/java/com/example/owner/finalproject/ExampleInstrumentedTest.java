@@ -1,4 +1,4 @@
-package com.example.gio.cameraapp3;
+package com.example.owner.finalproject;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.gio.cameraapp3", appContext.getPackageName());
+        assertEquals("com.example.owner.finalproject", appContext.getPackageName());
     }
 }

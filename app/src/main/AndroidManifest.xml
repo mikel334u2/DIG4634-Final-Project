@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.gio.cameraapp3">
+    package="com.example.owner.finalproject">
 
     <uses-feature android:name="android.hardware.camera2" android:required="true"></uses-feature>﻿
 
@@ -18,6 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Activity2"
+            android:exported = "true"></activity>
     </application>
 
 </manifest>

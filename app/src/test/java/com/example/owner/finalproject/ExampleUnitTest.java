@@ -1,4 +1,4 @@
-package com.example.gio.cameraapp3;
+package com.example.owner.finalproject;
 
 import org.junit.Test;
 
